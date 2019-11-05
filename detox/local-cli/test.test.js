@@ -90,7 +90,7 @@ describe('test', () => {
 
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          `${normalize('node_modules/.bin/jest')} --config=e2e/config.json --maxWorkers=1 ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} "e2e"`
+          `${normalize('node_modules/.bin/jest')} --config e2e/config.json ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} --maxWorkers 1 "e2e"`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -133,7 +133,7 @@ describe('test', () => {
     );
 
     const expectWorkersArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
-      expect.stringContaining(`--maxWorkers=${value}`),
+      expect.stringContaining(`--maxWorkers ${value}`),
       expect.anything(),
     );
 
