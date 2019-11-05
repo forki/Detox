@@ -283,24 +283,27 @@ module.exports.handler = async function test(program) {
       ...getPassthroughArguments(),
     ]).join(' ');
 
-    const detoxEnvironmentVariables = _.pick(program, [
-      'configuration',
-      'loglevel',
-      'cleanup',
-      'reuse',
-      'debugSynchronization',
-      'gpu',
-      'headless',
-      'artifactsLocation',
-      'recordLogs',
-      'takeScreenshots',
-      'recordVideos',
-      'recordPerformance',
-      'deviceName',
-      'reportSpecs',
-      'readOnlyEmu',
-      'deviceLaunchArgs',
-    ]);
+    const detoxEnvironmentVariables = {
+      ..._.pick(program, [
+        'configuration',
+        'loglevel',
+        'cleanup',
+        'reuse',
+        'debugSynchronization',
+        'gpu',
+        'headless',
+        'artifactsLocation',
+        'recordLogs',
+        'takeScreenshots',
+        'recordVideos',
+        'recordPerformance',
+        'deviceName',
+        'reportSpecs',
+        'readOnlyEmu',
+        'deviceLaunchArgs',
+      ]),
+      DETOX_TEST_STARTED: Date.now(),
+    };
 
     launchTestRunner(command, detoxEnvironmentVariables);
   }

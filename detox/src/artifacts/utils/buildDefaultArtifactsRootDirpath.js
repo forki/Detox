@@ -6,7 +6,8 @@ function buildDefaultRootForArtifactsRootDirpath(configuration, artifactsLocatio
     return artifactsLocation;
   }
 
-  const subdir = `${configuration}.${getTimeStampString()}`;
+  const seed = Number(process.env.DETOX_TEST_STARTED || String(Date.now()));
+  const subdir = `${configuration}.${getTimeStampString(new Date(seed))}`;
   return path.join(artifactsLocation, subdir);
 }
 
