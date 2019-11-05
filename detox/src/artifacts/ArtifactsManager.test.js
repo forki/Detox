@@ -37,11 +37,10 @@ describe('ArtifactsManager', () => {
     let artifactsManager;
 
     beforeEach(() => {
-      proxy.argparse.getArgValue.mockImplementation((key) => {
-        return (key === 'artifacts-location') ? '/tmp' : '';
+      artifactsManager = new proxy.ArtifactsManager({
+        artifactsLocation: '/tmp',
+        plugins: {},
       });
-
-      artifactsManager = new proxy.ArtifactsManager();
     });
 
     it('should provide artifacts location to path builder', async () => {
@@ -54,11 +53,19 @@ describe('ArtifactsManager', () => {
       await artifactsManager.onTerminate();
     });
 
-    describe('with { pathBuilder } string', () => {
+    describe('with { pathBuilder } instance', () => {
       it('should require that module as pathBuilder', () => {
         const pathBuilder = new FakePathBuilder();
         artifactsManager = new proxy.ArtifactsManager({ pathBuilder });
         expect(artifactsManager._pathBuilder).toBe(pathBuilder);
+      });
+    })
+
+    describe('with { pathBuilder } function', () => {
+      it('should require that module as pathBuilder', () => {
+        const pathBuilder = jest.fn(() => new FakePathBuilder());
+        artifactsManager = new proxy.ArtifactsManager({ pathBuilder, artifactsLocation: '/tmp/42' });
+        expect(pathBuilder).toHaveBeenCalledWith({ artifactsRootDir: '/tmp/42' });
       });
     })
   });
@@ -71,12 +78,18 @@ describe('ArtifactsManager', () => {
         onBeforeLaunchApp: jest.fn(),
       });
 
-      artifactsManager = new proxy.ArtifactsManager();
+      artifactsManager = new proxy.ArtifactsManager({
+        artifactsLocation: '/tmp',
+        plugins: {
+          mock: { setting: 'value' },
+        },
+      });
       artifactsManager.registerArtifactPlugins({ mock: factory });
     });
 
     it('should get called immediately', () => {
       expect(factory).toHaveBeenCalledWith(expect.objectContaining({
+        userConfig: { setting: 'value' },
         preparePathForArtifact: expect.any(Function),
         trackArtifact: expect.any(Function),
         untrackArtifact: expect.any(Function),
@@ -97,6 +110,7 @@ describe('ArtifactsManager', () => {
 
         return (testPlugin = {
           name: 'testPlugin',
+          userConfig: api.userConfig,
           disable: jest.fn(),
           onBootDevice: jest.fn(),
           onBeforeShutdownDevice: jest.fn(),
@@ -115,8 +129,21 @@ describe('ArtifactsManager', () => {
       };
 
       pathBuilder = new FakePathBuilder();
-      artifactsManager = new proxy.ArtifactsManager({ pathBuilder });
+      artifactsManager = new proxy.ArtifactsManager({
+        pathBuilder,
+        plugins: {
+          testPlugin: {
+            lifecycle: 'all',
+          }
+        }
+      });
       artifactsManager.registerArtifactPlugins({ testPlugin: testPluginFactory });
+    });
+
+    describe('.userConfig', () => {
+      it('should contain plugin config', async () => {
+        expect(artifactsApi.userConfig).toEqual({ lifecycle: 'all' });
+      });
     });
 
     describe('.preparePathForArtifact()', () => {

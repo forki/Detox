@@ -15,9 +15,20 @@ class ArtifactsManager {
     this._idleCallbackRequests = [];
     this._activeArtifacts = [];
     this._artifactPlugins = {};
-    this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
-      artifactsRootDir: artifactsLocation,
-    });
+
+    this._pathBuilder = this._instantiatePathBuilder(pathBuilder, artifactsLocation);
+  }
+
+  _instantiatePathBuilder(pathBuilderFactory, artifactsRootDir) {
+    if (typeof pathBuilderFactory === 'function') {
+      return pathBuilderFactory({ artifactsRootDir });
+    }
+
+    if (pathBuilderFactory) {
+      return pathBuilderFactory;
+    }
+
+    return new ArtifactPathBuilder({ artifactsRootDir });
   }
 
   _instantitateArtifactPlugin(pluginFactory, pluginUserConfig) {

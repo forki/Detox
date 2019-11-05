@@ -66,10 +66,6 @@ function composeDeviceConfig({ configurations }) {
   return deviceConfig;
 }
 
-function isPluginEnabled(key) {
-
-}
-
 function getArtifactsCliConfig() {
   return {
     artifactsLocation: argparse.getArgValue('artifacts-location'),
@@ -92,35 +88,29 @@ function composeArtifactsConfig({
   detoxConfig,
   cliConfig = getArtifactsCliConfig()
 }) {
-  const artifactsConfig = {
-    artifactsLocation: 'artifacts',
-    pathBuilder: null,
-    plugins: {
-      log: { lifecycle: 'none' },
-      screenshot: { lifecycle: 'manual' },
-      video: { lifecycle: 'none' },
-      instruments: { lifecycle: 'none' },
-    },
-  };
-
-  _.merge(artifactsConfig, detoxConfig.artifacts);
-  _.merge(artifactsConfig, deviceConfig.artifacts);
-
-  if (cliConfig.artifactsLocation) {
-    artifactsConfig.plugins.log.lifecycle = cliConfig.artifactsLocation;
-  }
-  if (cliConfig.recordLogs) {
-    artifactsConfig.plugins.log.lifecycle = cliConfig.recordLogs;
-  }
-  if (cliConfig.takeScreenshots) {
-    artifactsConfig.plugins.screenshot.lifecycle = cliConfig.recordLogs;
-  }
-  if (cliConfig.recordVideos) {
-    artifactsConfig.plugins.video.lifecycle = cliConfig.recordVideos;
-  }
-  if (cliConfig.recordPerformance) {
-    artifactsConfig.plugins.instruments.lifecycle = cliConfig.recordPerformance;
-  }
+  const artifactsConfig = _.defaultsDeep(
+      {
+        artifactsLocation: cliConfig.artifactsLocation,
+        plugins: {
+          log: { lifecycle: cliConfig.recordLogs },
+          screenshot: { lifecycle: cliConfig.takeScreenshots },
+          video: { lifecycle: cliConfig.recordVideos },
+          instruments: { lifecycle: cliConfig.recordPerformance },
+        },
+      },
+      deviceConfig.artifacts,
+      detoxConfig.artifacts,
+      {
+        artifactsLocation: 'artifacts',
+        pathBuilder: null,
+        plugins: {
+          log: { lifecycle: 'none' },
+          screenshot: { lifecycle: 'manual' },
+          video: { lifecycle: 'none' },
+          instruments: { lifecycle: 'none' },
+        },
+      }
+  );
 
   artifactsConfig.artifactsLocation = buildDefaultArtifactsRootDirpath(
     configurationName,

@@ -9,6 +9,17 @@ const defaultArtifactsConfiguration = {
   },
 };
 
+const allArtifactsConfiguration = {
+  artifactsLocation: 'artifacts',
+  pathBuilder: null,
+  plugins: {
+    log: { lifecycle: 'all' },
+    screenshot: { lifecycle: 'all' },
+    video: { lifecycle: 'all' },
+    instruments: { lifecycle: 'all' },
+  },
+};
+
 const validOneDeviceNoSession = {
   "configurations": {
     "ios.sim.release": {
@@ -209,6 +220,7 @@ const deviceObjectEmulator = {
 
 module.exports = {
   defaultArtifactsConfiguration,
+  allArtifactsConfiguration,
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
   validTwoDevicesNoSession,
