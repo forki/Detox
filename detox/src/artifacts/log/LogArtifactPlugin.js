@@ -7,11 +7,8 @@ const getTimeStampString = require('../utils/getTimeStampString');
  * @abstract
  */
 class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
-  constructor(config) {
-    super(config);
-
-    this.enabled = this.api.userConfig.lifecycle !== 'none';
-    this.keepOnlyFailedTestsArtifacts = this.api.userConfig.lifecycle === 'failing';
+  constructor({ api }) {
+    super({ api });
   }
 
   async onAfterAll() {
@@ -49,6 +46,27 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
 
   async preparePathForTestArtifact(testSummary) {
     return this.api.preparePathForArtifact('process.log', testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'failing':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: true,
+        };
+      case 'all':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+      default:
+        return {
+          enabled: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 

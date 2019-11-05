@@ -73,6 +73,7 @@ describe('index', () => {
     expect(Detox).toHaveBeenCalledWith({
       artifactsConfig: {
         ...schemes.defaultArtifactsConfiguration,
+        plugins: schemes.pluginsDefaultsResolved,
         artifactsLocation: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
       },
       deviceConfig: schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
@@ -89,6 +90,7 @@ describe('index', () => {
     expect(Detox).toHaveBeenCalledWith({
       artifactsConfig: {
         ...schemes.defaultArtifactsConfiguration,
+        plugins: schemes.pluginsDefaultsResolved,
         artifactsLocation: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.debug/),
       },
       deviceConfig: schemes.validTwoDevicesNoSession.configurations['ios.sim.debug'],
@@ -123,6 +125,7 @@ describe('index', () => {
     expect(Detox).toHaveBeenCalledWith({
       artifactsConfig: {
         ...schemes.defaultArtifactsConfiguration,
+        plugins: schemes.pluginsDefaultsResolved,
         artifactsLocation: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
       },
       deviceConfig: expectedConfig,

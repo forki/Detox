@@ -4,17 +4,42 @@ const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTe
  * @abstract
  */
 class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
-  constructor(config) {
-    super(config);
-
-    const { userConfig } = this.api;
-    this.enabled = userConfig.lifecycle !== 'none';
-    this.shouldTakeAutomaticSnapshots = userConfig.lifecycle === 'failing' || userConfig.lifecycle === 'all';
-    this.keepOnlyFailedTestsArtifacts = userConfig.lifecycle === 'failing';
+  constructor({ api }) {
+    super({ api });
   }
 
   async preparePathForSnapshot(testSummary, name) {
     return this.api.preparePathForArtifact(`${name}.png`, testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'failing':
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: true,
+          keepOnlyFailedTestsArtifacts: true,
+        };
+      case 'all':
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+        return {
+          enabled: false,
+          shouldTakeAutomaticSnapshots: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'manual':
+      default:
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 

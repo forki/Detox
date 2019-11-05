@@ -1,11 +1,16 @@
+const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
+const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
+const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+
 const defaultArtifactsConfiguration = {
   artifactsLocation: 'artifacts',
   pathBuilder: null,
   plugins: {
-    log: { lifecycle: 'none' },
-    screenshot: { lifecycle: 'manual' },
-    video: { lifecycle: 'none' },
-    instruments: { lifecycle: 'none' },
+    log: 'none',
+    screenshot: 'manual',
+    video: 'none',
+    instruments: 'none',
   },
 };
 
@@ -13,11 +18,31 @@ const allArtifactsConfiguration = {
   artifactsLocation: 'artifacts',
   pathBuilder: null,
   plugins: {
-    log: { lifecycle: 'all' },
-    screenshot: { lifecycle: 'all' },
-    video: { lifecycle: 'all' },
-    instruments: { lifecycle: 'all' },
+    log: 'all',
+    screenshot: 'all',
+    video: 'all',
+    instruments: 'all',
   },
+};
+
+const pluginsDefaultsResolved = {
+  log: LogArtifactPlugin.parseConfig('none'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
+  video: VideoArtifactPlugin.parseConfig('none'),
+  instruments: SimulatorInstrumentsPlugin.parseConfig('none'),
+};
+
+const pluginsFailingResolved = {
+  log: LogArtifactPlugin.parseConfig('failing'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('failing'),
+  video: VideoArtifactPlugin.parseConfig('failing'),
+};
+
+const pluginsAllResolved = {
+  log: LogArtifactPlugin.parseConfig('all'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
+  video: VideoArtifactPlugin.parseConfig('all'),
+  instruments: SimulatorInstrumentsPlugin.parseConfig('all'),
 };
 
 const validOneDeviceNoSession = {
@@ -219,8 +244,11 @@ const deviceObjectEmulator = {
 };
 
 module.exports = {
-  defaultArtifactsConfiguration,
   allArtifactsConfiguration,
+  defaultArtifactsConfiguration,
+  pluginsAllResolved,
+  pluginsDefaultsResolved,
+  pluginsFailingResolved,
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
   validTwoDevicesNoSession,

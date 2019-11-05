@@ -1,6 +1,10 @@
 const _ = require('lodash');
 const path = require('path');
 const schemes = require('./configurations.mock');
+const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
+const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
+const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
 
 describe('configuration', () => {
   let configuration;
@@ -41,8 +45,9 @@ describe('configuration', () => {
         deviceConfig: {},
         detoxConfig: {},
       })).toEqual({
-        ...schemes.defaultArtifactsConfiguration,
         artifactsLocation: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
+        pathBuilder: null,
+        plugins: schemes.pluginsDefaultsResolved,
       });
     });
 
@@ -59,9 +64,9 @@ describe('configuration', () => {
         detoxConfig: {},
         cliConfig: {}
       })).toEqual({
-        ...schemes.allArtifactsConfiguration,
         artifactsLocation: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
         pathBuilder: _.noop,
+        plugins: schemes.pluginsAllResolved,
       });
     });
 
@@ -78,9 +83,9 @@ describe('configuration', () => {
         },
         cliConfig: {}
       })).toEqual({
-        ...schemes.allArtifactsConfiguration,
         artifactsLocation: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
         pathBuilder: _.noop,
+        plugins: schemes.pluginsAllResolved,
       });
     });
 
@@ -97,8 +102,9 @@ describe('configuration', () => {
           recordPerformance: 'all',
         }
       })).toEqual({
-        ...schemes.allArtifactsConfiguration,
         artifactsLocation: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        pathBuilder: null,
+        plugins: schemes.pluginsAllResolved,
       });
     });
 
@@ -113,7 +119,7 @@ describe('configuration', () => {
             artifactsLocation: 'configuration',
             pathBuilder: _.identity,
             plugins: {
-              log: { lifecycle: 'failing' },
+              log: 'failing',
             },
           },
         },
@@ -122,7 +128,7 @@ describe('configuration', () => {
             artifactsLocation: 'global',
             pathBuilder: _.noop,
             plugins: {
-              screenshot: { lifecycle: 'all' },
+              screenshot: 'all',
             },
           },
         },
@@ -130,10 +136,10 @@ describe('configuration', () => {
         artifactsLocation: expect.stringMatching(/^cli[\\\/]priority\.\d{4}/),
         pathBuilder: _.identity,
         plugins: {
-          log: { lifecycle: 'failing' },
-          screenshot: { lifecycle: 'all' },
-          video: { lifecycle: 'none' },
-          instruments: { lifecycle: 'none' },
+          log: schemes.pluginsFailingResolved.log,
+          screenshot: schemes.pluginsAllResolved.screenshot,
+          video: schemes.pluginsDefaultsResolved.video,
+          instruments: schemes.pluginsDefaultsResolved.instruments,
         },
       });
     });

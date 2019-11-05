@@ -6,6 +6,11 @@ const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
 
+const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
+const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
+const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+
 async function defaultSession() {
   return {
     server: `ws://localhost:${await getPort()}`,
@@ -92,10 +97,10 @@ function composeArtifactsConfig({
       {
         artifactsLocation: cliConfig.artifactsLocation,
         plugins: {
-          log: { lifecycle: cliConfig.recordLogs },
-          screenshot: { lifecycle: cliConfig.takeScreenshots },
-          video: { lifecycle: cliConfig.recordVideos },
-          instruments: { lifecycle: cliConfig.recordPerformance },
+          log: cliConfig.recordLogs,
+          screenshot: cliConfig.takeScreenshots,
+          video: cliConfig.recordVideos,
+          instruments: cliConfig.recordPerformance,
         },
       },
       deviceConfig.artifacts,
@@ -104,10 +109,10 @@ function composeArtifactsConfig({
         artifactsLocation: 'artifacts',
         pathBuilder: null,
         plugins: {
-          log: { lifecycle: 'none' },
-          screenshot: { lifecycle: 'manual' },
-          video: { lifecycle: 'none' },
-          instruments: { lifecycle: 'none' },
+          log: 'none',
+          screenshot: 'manual',
+          video: 'none',
+          instruments: 'none',
         },
       }
   );
@@ -120,6 +125,15 @@ function composeArtifactsConfig({
   if (typeof artifactsConfig.pathBuilder === 'string') {
     artifactsConfig.pathBuilder = resolveModuleFromPath(artifactsConfig.pathBuilder);
   }
+
+  artifactsConfig.plugins = _.mapValues(artifactsConfig.plugins, (value, key) => {
+    switch (key) {
+      case 'instruments': return SimulatorInstrumentsPlugin.parseConfig(value);
+      case 'log': return LogArtifactPlugin.parseConfig(value);
+      case 'screenshot': return ScreenshotArtifactPlugin.parseConfig(value);
+      case 'video': return VideoArtifactPlugin.parseConfig(value);
+    }
+  });
 
   return artifactsConfig;
 }

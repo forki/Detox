@@ -3,11 +3,9 @@ const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPl
 const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
-  constructor(config) {
-    super(config);
-
-    this.client = config.client;
-    this.enabled = this.api.userConfig.lifecycle === 'all';
+  constructor({ api, client }) {
+    super({ api });
+    this.client = client;
   }
 
   async onBeforeUninstallApp(event) {
@@ -60,6 +58,22 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
 
   async preparePathForTestArtifact(testSummary) {
     return this.api.preparePathForArtifact('test.dtxrec', testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'all':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+      default:
+        return {
+          enabled: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 
