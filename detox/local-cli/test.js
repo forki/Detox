@@ -302,7 +302,7 @@ module.exports.handler = async function test(program) {
         'readOnlyEmu',
         'deviceLaunchArgs',
       ]),
-      DETOX_TEST_STARTED: Date.now(),
+      DETOX_START_TIMESTAMP: Date.now(),
     };
 
     launchTestRunner(command, detoxEnvironmentVariables);
