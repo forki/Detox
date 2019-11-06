@@ -65,7 +65,7 @@ function init() {
   const bunyanStreams = [createPlainBunyanStream({ level })];
 
   let jsonFileStreamPath, plainFileStreamPath;
-  if (!global.IS_RUNNING_DETOX_UNIT_TESTS) {
+  if (!global.DETOX_CLI && !global.IS_RUNNING_DETOX_UNIT_TESTS) {
     {
       jsonFileStreamPath = temporaryPath.for.log();
       fs.ensureFileSync(jsonFileStreamPath);
@@ -82,10 +82,6 @@ function init() {
         logPath: plainFileStreamPath,
       }));
     }
-    process.on('exit', () => {
-      fs.removeSync(jsonFileStreamPath);
-      fs.removeSync(plainFileStreamPath);
-    });
   }
 
   const logger = bunyan.createLogger({
