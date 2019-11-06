@@ -22,8 +22,8 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
         ]);
 
         await Promise.all([
-          new FileArtifact({ temporaryPath: logger.jsonFileStreamPath }).save(jsonLogPath),
-          new FileArtifact({ temporaryPath: logger.plainFileStreamPath }).save(plainLogPath)
+          new FileArtifact({ temporaryPath: logger.jsonFileStreamPath }).save(jsonLogPath, { append: true }),
+          new FileArtifact({ temporaryPath: logger.plainFileStreamPath }).save(plainLogPath, { append: true })
         ]);
       });
     }
