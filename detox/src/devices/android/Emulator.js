@@ -27,7 +27,6 @@ class Emulator {
     const deviceLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
     const emulatorArgs = _.compact([
       '-verbose',
-      '-no-audio',
       '-no-boot-anim',
       argparse.getArgValue('headless') ? '-no-window' : '',
       argparse.getArgValue('readOnlyEmu') ? '-read-only' : '',
