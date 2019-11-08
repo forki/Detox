@@ -58,6 +58,9 @@ class Emulator {
         if (line.includes('Adb connected, start proxing data')) {
           childProcessPromise._cpResolve();
         }
+		if (line.includes('got message from guest system fingerprint HAL')) {
+          childProcessPromise._cpResolve();
+        }
       });
 
     function detach() {
